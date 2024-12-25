@@ -11,11 +11,12 @@ public class GladLib {
     private ArrayList<String> timeList;
     private ArrayList<String> verbList;
     private ArrayList<String> fruitList;
+    private ArrayList<String> usedWordList;
 
     private Random myRandom;
 
     private static String dataSourceURL = "http://dukelearntoprogram.com/course3/data";
-    private static String dataSourceDirectory = "data";
+    private static String dataSourceDirectory = "data1";
 
     public GladLib(){
         initializeFromSource(dataSourceDirectory);
@@ -37,6 +38,7 @@ public class GladLib {
         timeList = readIt(source+"/timeframe.txt");
         verbList = readIt(source+"/verb.txt");
         fruitList = readIt(source+"/fruit.txt");
+        usedWordList = new ArrayList<>();
     }
 
     private String randomFrom(ArrayList<String> source){
@@ -86,9 +88,16 @@ public class GladLib {
         if (first == -1 || last == -1){
             return w;
         }
-        String prefix = w.substring(0,first);
-        String suffix = w.substring(last+1);
-        String sub = getSubstitute(w.substring(first+1,last));
+        String prefix;
+        String suffix;
+        String sub;
+
+        do {
+            prefix = w.substring(0, first);
+            suffix = w.substring(last + 1);
+            sub = getSubstitute(w.substring(first + 1, last));
+        } while (usedWordList.contains(sub));
+        usedWordList.add(sub);
         return prefix+sub+suffix;
     }
 
@@ -139,11 +148,25 @@ public class GladLib {
     }
 
     public void makeStory(){
+        usedWordList.clear();
         System.out.println("\n");
-        String story = fromTemplate("data/madtemplate.txt");
+        String story = fromTemplate("data1/madtemplate.txt");
+        System.out.println("Total words used: " + get_word_count());
+
+        usedWordList.clear();
+        String story2 = fromTemplate("data1/madtemplate2.txt");
+        System.out.println("Total words used: " + get_word_count());
         printOut(story, 60);
+        System.out.println(" ");
+        System.out.println(" ");
+        printOut(story2, 60);
+        System.out.println("\n");
+
+
     }
 
-
+    public int get_word_count(){
+        return usedWordList.size();
+    }
 
 }
